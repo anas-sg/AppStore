@@ -43,12 +43,14 @@ def view(request, student_id_mod_code):
     return render(request, 'app/view.html', result_dict)
 
 # Create your views here.
-def add_tutor(request):
+def add_tutor(request, filled):
     """Shows the add_tutor page"""
+    request.session['login'] = request.session.get('login', False)
     request.session['admin'] = request.session.get('admin', False)
-    if not request.session['admin']:
+    request.session['filled'] = bool(filled)
+    if not request.session['login']:
         return HttpResponse(reason="Not logged in", status=401)
-    context = {"status": 0}
+    status = 0
     if request.POST:
         ## Check if user already a tutor
         with connection.cursor() as cursor:
@@ -60,13 +62,18 @@ def add_tutor(request):
                 tutor_values = [request.POST['student_id'], request.POST['name'], request.POST['module_code']
                         , request.POST['grade'], request.POST['fee'], request.POST['unit_time'], request.POST['year']]
                 cursor.execute(make_tutor_op, tutor_values)
-                context["status"] = 1   
+                status = 1   
             else:
-                context["status"] = 2
+                status = 2
     with connection.cursor() as cursor:
+        if request.session['filled']:
+            cursor.execute("SELECT name FROM users WHERE student_id = %s", [request.session['student_id']])
+            tutor = cursor.fetchone()
         cursor.execute("SELECT module_code, module_name FROM modules")
         modules = cursor.fetchall()
-        context["modules"] = modules
+    context = {"status": status, "modules": modules, **request.session}
+    if request.session['filled']:
+        context["tutor"] = tutor
     return render(request, "app/add_tutor.html", context)
 
 # Create your views here.

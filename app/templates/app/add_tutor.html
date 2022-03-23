@@ -23,13 +23,21 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <div class="navbar-nav me-auto">
                         <a class="nav-link" href="{% url 'index' %}">Home</a>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Add</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <li><a class="dropdown-item active" href="{% url 'add_tutor' %}">Add tutor</a></li>
-                                <li><a class="dropdown-item" href="{% url 'add_user' %}">Add user</a></li>
-                            </ul>
-                        </li>
+                        {% if login %}
+                            <a class="nav-link" href="{% url 'profile' student_id %}">Profile</a>
+                            <a class="nav-link active" href="{% url 'add_tutor' '1' %}">Create listing</a>
+                        {% endif %}
+                        {% if admin %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Add
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <li><a class="dropdown-item active" href="{% url 'add_tutor' '0' %}">Add tutor</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'add_user' %}">Add user</a></li>
+                                </ul>
+                            </li>
+                        {% endif %}
                     </div>
                     <form class="d-flex">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -63,13 +71,21 @@
                 {% csrf_token %}
                 <!-- form -->
                 <div id="div_id_id" class="control-group form-floating">
-                    <input type="text" name="student_id" maxlength="64" class="textinput textInput form-control" id="id_id" placeholder="ID" value="E3068780" required>
+                    {% if filled %}
+                        <input type="text" name="student_id" maxlength="64" class="textinput textInput form-control" id="id_id" placeholder="ID" value="{{ student_id }}" required readonly>
+                    {% else %}
+                        <input type="text" name="student_id" maxlength="64" class="textinput textInput form-control" id="id_id" placeholder="ID" value="E3068780" required>
+                    {% endif %}                    
                     <label for="id_id" class="control-label requiredField form-label">
                         NUSNET ID<span class="asteriskField">*</span> 
                     </label>     
                 </div>                        
                 <div id="div_id_name" class="control-group form-floating">
-                    <input type="text" name="name" maxlength="64" class="textinput textInput form-control" id="id_name" placeholder="Name" value="AAAA" required>
+                    {% if filled %}
+                        <input type="text" name="name" maxlength="64" class="textinput textInput form-control" id="id_name" placeholder="Name" value="{{ tutor.0 }}" required readonly>
+                    {% else %}
+                        <input type="text" name="name" maxlength="64" class="textinput textInput form-control" id="id_name" placeholder="Name" value="AAAA" required>   
+                    {% endif %}                    
                     <label for="id_name" class="control-label requiredField form-label">
                         Name<span class="asteriskField">*</span> 
                     </label>     

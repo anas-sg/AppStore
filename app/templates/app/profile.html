@@ -20,14 +20,17 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <div class="navbar-nav me-auto mb-2 mb-lg-0">
                         <a class="nav-link" href="{% url 'index' %}">Home</a>
-                        <a class="nav-link active" aria-current="page" href="#">Profile</a>
+                        {% if login %}
+                            <a class="nav-link active" href="#">Profile</a>
+                            <a class="nav-link" href="{% url 'add_tutor' '1' %}">Create listing</a>
+                        {% endif %}
                         {% if admin %}
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Add
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <li><a class="dropdown-item" href="{% url 'add_tutor' %}">Add tutor</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'add_tutor' '0' %}">Add tutor</a></li>
                                     <li><a class="dropdown-item" href="{% url 'add_user' %}">Add user</a></li>
                                 </ul>
                             </li>

@@ -22,6 +22,7 @@
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
                         {% if login %}
                             <a class="nav-link" href="{% url 'profile' student_id %}">Profile</a>
+                            <a class="nav-link" href="{% url 'add_tutor' '1' %}">Create listing</a>
                         {% else %}
                             <a class="nav-link" href="{% url 'register' %}">Register</a>
                         {% endif %}
@@ -31,7 +32,7 @@
                                 Add
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <li><a class="dropdown-item" href="{% url 'add_tutor' %}">Add tutor</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'add_tutor' '0' %}">Add tutor</a></li>
                                     <li><a class="dropdown-item" href="{% url 'add_user' %}">Add user</a></li>
                                 </ul>
                             </li>
