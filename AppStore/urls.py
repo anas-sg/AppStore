@@ -31,5 +31,6 @@ urlpatterns = [
     path('logout', app.views.logout, name='logout'),
     path('profile/<str:student_id>', app.views.profile, name='profile'),
     path('users', app.views.users, name='users'),
+    path('edit_user/<str:student_id>', app.views.edit_user, name='edit_user'),
     path('test', app.views.test, name='test')
 ]

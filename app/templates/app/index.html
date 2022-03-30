@@ -36,6 +36,7 @@
                                     <li><a class="dropdown-item" href="{% url 'add_user' %}">Add user</a></li>
                                 </ul>
                             </li>
+                            <a class="nav-link" href="{% url 'users' %}">Users</a>
                         {% endif %}
                     </div>
                     <form method="GET" class="d-flex">
@@ -73,11 +74,13 @@
                             {% if admin %} | 
                                 <a href="{% url 'edit' tutor.0|add:'_'|add:tutor.2 %}"><button class="btn btn-warning btn-sm">Edit <i class="bi bi-pencil-square"></i></button></a> |
                                 <form method="POST" style="display: inline;">
-                                {% csrf_token %}
-                                <input type="hidden" name="student_id_mod_code" value="{{tutor.0}}_{{tutor.2}}">
-                                <button  class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete {{ tutor.1 }}?');" type="submit" name="action" value="delete">Delete <i class="bi bi-trash-fill"></i></button>
+                                    {% csrf_token %}
+                                    <input type="hidden" name="student_id_mod_code" value="{{tutor.0}}_{{tutor.2}}">
+                                    <button  class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete {{ tutor.1 }}?');" type="submit" name="action" value="delete">Delete <i class="bi bi-trash-fill"></i></button>
+                                </form>
                             {% endif %} 
-                          </form></td>
+                                
+                        </td>
                     </tr>
                     {% endfor %}
                 </table>

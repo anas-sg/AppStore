@@ -184,4 +184,25 @@ def test(request):
     })
 
 def users(request):
-    pass
+    request.session['login'] = request.session.get('login', False)
+    request.session['admin'] = request.session.get('admin', False)
+    if not request.session['admin']:
+        return HttpResponse(reason="Not logged in", status=401)
+    if request.POST:
+        if 'admin' in request.POST:
+            student_id = request.POST['admin']
+            is_admin = True  
+        else:
+            student_id = request.POST['user']
+            is_admin = False
+        with connection.cursor() as cursor:
+            cursor.execute("UPDATE users SET is_admin = %s WHERE student_id = %s", [is_admin, student_id])
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM users ORDER BY name")
+        users = cursor.fetchall()
+    return render(request,'app/users.html', {
+        'users': users, **request.session
+    })
+
+def edit_user(request, student_id):
+    return HttpResponse("Not implemented yet", reason="Successful", status=200)
