@@ -19,7 +19,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <div class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <a class="nav-link" aria-current="page" href="#">Home</a>
+                        <a class="nav-link" aria-current="page" href="{% url 'index' %}">Home</a>
                         {% if login %}
                             <a class="nav-link" href="{% url 'profile' student_id %}">Profile</a>
                             <a class="nav-link" href="{% url 'add_tutor' '1' %}">Create listing</a>

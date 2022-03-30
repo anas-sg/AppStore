@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="An online service for NUS students to find other student tutors for module coaching">
         <meta name="author" content="Muhammed Anas">
-        <title>NUS Tutoring Service - Edit</title>
+        <title>NUS Tutoring Service - Edit User</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
         <link rel="stylesheet" href="{% static 'app/css/edit.css' %}">
@@ -51,63 +51,74 @@
             </div>
         </nav>
         <div class="container">
+            {% if status == 1 %}
+            <div class="toast align-items-center text-white {% if status == 1 %}bg-success {% else %}bg-danger{% endif %} border-0" id="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">                                
+                            {% if status == 1 %}
+                            <i class="bi bi-person-check-fill"></i>
+                            Successfully edited user
+                            {% else %}
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            User already exists
+                            {% endif %}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+            {% endif %}
             <!-- Create a Form -->
             <form method="POST">
                 <!-- Security token by Django -->
                 {% csrf_token %}
                 <!-- form -->
-                <div id="div_id_name" class="control-group form-floating">
-                    <input type="text" name="name" value="{{ record.1 }}" maxlength="64" class="textinput textInput form-control" id="id_name" placeholder="Name" required readonly>
-                    <label for="id_name" class="control-label requiredField form-label">
-                        Name<span class="asteriskField">*</span> 
-                    </label>     
-                </div>
                 <div id="div_id_id" class="control-group form-floating">
-                    <input type="text" name="student_id" value="{{ record.0 }}" maxlength="64" class="textinput textInput form-control" id="id_id" placeholder="ID" required readonly>
+                    <input type="text" name="student_id" value="{{ user.0 }}" maxlength="64" class="textinput textInput form-control" id="id_id" placeholder="ID" required readonly>
                     <label for="id_id" class="control-label requiredField form-label">
                         ID<span class="asteriskField">*</span> 
                     </label>     
                 </div>
-                <div id="div_id_module_code" class="control-group form-floating">
-                    <input type="text" name="module_code" value="{{ record.2 }}" maxlength="64" class="textinput textInput form-control" id="id_module_code" placeholder="Module code" required readonly>
-                    <label for="id_module_code" class="control-label requiredField form-label">
-                        Module code<span class="asteriskField">*</span> 
+                <div id="div_id_name" class="control-group form-floating">
+                    <input type="text" name="name" value="{{ user.1 }}" maxlength="64" class="textinput textInput form-control" id="id_name" placeholder="Name" required readonly>
+                    <label for="id_name" class="control-label requiredField form-label">
+                        Name<span class="asteriskField">*</span> 
                     </label>     
                 </div>
+                {% if admin %}
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="is_admin" id="user" value="False" {% if not user.2 %}checked{% endif %}>
+                    <label class="form-check-label text-white" for="user">User</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="is_admin" id="admin" value="True" {% if user.2 %}checked{% endif %}>
+                    <label class="form-check-label text-white" for="admin">Admin</label>
+                </div>
+                {% endif %}
                 <div id="div_id_module_name" class="control-group form-floating">
-                    <input type="text" name="module_name" value="{{ module.0 }}" maxlength="64" class="textinput textInput form-control" id="id_module_name" placeholder="Module name" required readonly>
+                    <input type="password" name="password" value="{{ user.3 }}" maxlength="64" class="textinput textInput form-control" id="password" placeholder="Password" required>
                     <label for="id_module_name" class="control-label requiredField form-label">
-                        Module name<span class="asteriskField">*</span> 
-                    </label>     
+                        Password<span class="asteriskField">*</span> 
+                    </label>                         
                 </div>
-                <div id="div_id_grade" class="control-group form-floating">
-                    <input type="text" name="grade" value="{{ record.3 }}" maxlength="64" class="textinput textInput form-control" id="id_grade" placeholder="Grade" required readonly>
-                    <label for="id_grade" class="control-label requiredField form-label">
-                        Grade<span class="asteriskField">*</span> 
-                    </label>     
-                </div>
-                <div id="div_id_sem" class="control-group form-floating">
-                    <input type="text" name="sem" value="{{ record.6 }}" maxlength="64" class="textinput textInput form-control" id="id_sem" placeholder="Semester" required readonly>
-                    <label for="id_sem" class="control-label requiredField form-label">
-                        Year<span class="asteriskField">*</span> 
-                    </label>     
-                </div>
-                <div id="div_id_fee" class="control-group form-floating">
-                    <input type="text" name="fee" value="{{ record.4 }}" maxlength="64" class="textinput textInput form-control" id="id_fee" placeholder="Fee" required>
-                    <label for="id_fee" class="control-label requiredField form-label">
-                        Fee<span class="asteriskField">*</span> 
-                    </label>     
-                </div>
-                <div id="div_id_unit_time" class="control-group form-floating">
-                    <input type="text" name="unit_time" value="{{ record.5 }}" maxlength="64" class="textinput textInput form-control" id="id_unit_time" placeholder="Unit time" required>
-                    <label for="id_unit_time" class="control-label requiredField form-label">
-                        Unit time<span class="asteriskField">*</span> 
-                    </label>     
-                </div>
-                <br>
-                <button type="submit" class="btn btn-primary text-center" value="Update">Update</button>
+                <label class="form-check-label text-white" for="show_pw">Show password</label>
+                    <input class="form-check-input" type="checkbox" id="show_pw" onchange='toggle();'>
+                <br><br>
+                <button type="submit" class="btn btn-primary text-center" value="submit">Update</button>
             </form>            
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            function toggle() {
+                var password = document.getElementById("password");
+                if (password.type === "password") {
+                    password.type = "text";
+                } else {
+                    password.type = "password";
+                }
+            }
+            var toast = document.getElementById('toast');
+            toast = new bootstrap.Toast(toast);
+            toast.show();
+        </script>
     </body>
 </html>

@@ -205,4 +205,23 @@ def users(request):
     })
 
 def edit_user(request, student_id):
-    return HttpResponse("Not implemented yet", reason="Successful", status=200)
+    request.session['login'] = request.session.get('login', False)
+    request.session['admin'] = request.session.get('admin', False)
+    if not request.session['login']:
+        return HttpResponse(reason="Not logged in", status=401)
+    if not request.session['admin'] and request.session['student_id'] != student_id:
+        return HttpResponse(reason="Not authorised", status=403)
+    status = 0
+    if request.POST:
+        with connection.cursor() as cursor:
+            if request.session['admin']:
+                cursor.execute("UPDATE users SET is_admin = %s, password = %s WHERE student_id = %s", [request.POST['is_admin'], request.POST['password'], student_id])
+            else:
+                cursor.execute("UPDATE users SET password = %s WHERE student_id = %s", [request.POST['password'], student_id])
+            status = 1
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM users WHERE student_id = %s", [student_id])
+        user = cursor.fetchone()
+    return render(request,'app/edit_user.html', {
+        'user': user, 'status': status, **request.session
+    })

@@ -21,3 +21,7 @@ body {
    transform: translateY(-50%);
    max-width: 100% !important;
 }
+
+.toast {
+    margin: 0 auto;
+}
