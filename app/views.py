@@ -225,3 +225,15 @@ def edit_user(request, student_id):
     return render(request,'app/edit_user.html', {
         'user': user, 'status': status, **request.session
     })
+
+def modules(request):
+    with connection.cursor() as cursor:
+        cursor.execute('''SELECT t.module_code, m.module_name, COUNT(*)
+                          FROM tutors t, modules m
+                          WHERE t.module_code = m.module_code
+                          GROUP BY t.module_code, m.module_name
+                          ORDER BY t.module_code, m.module_name''')
+        modules = cursor.fetchall()
+    return render(request,'app/modules.html', {
+        'modules': modules
+    })

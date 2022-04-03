@@ -23,6 +23,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <div class="navbar-nav me-auto">
                         <a class="nav-link" href="{% url 'index' %}">Home</a>
+                        <a class="nav-link" aria-current="page" href="{% url 'modules' %}">Modules</a>
                         {% if login %}
                             <a class="nav-link" href="{% url 'profile' student_id %}">Profile</a>
                             <a class="nav-link active" href="{% url 'add_tutor' '1' %}">Create listing</a>
