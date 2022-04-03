@@ -65,7 +65,7 @@
                     {% for tutor in records %}
                     <tr>
                         <!-- <td class="text-center"> {{ tutor.5 }} </td> -->
-                        <td class="text-center">{{ tutor.1 }}</td>
+                        <td class="text-center"><a href="{% url 'profile' tutor.0 %}" target="_blank">{{ tutor.1 }}</a></td>
                         <td class="text-center">{{ tutor.2 }}</td>
                         <!-- <td class="text-center"> {{ tutor.1 }} </td> -->
                         <td class="text-center">

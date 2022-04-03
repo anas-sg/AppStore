@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS modules (
  module_code VARCHAR(15) PRIMARY KEY,
  module_name VARCHAR(100) NOT NULL,
- modular_credits INT NOT NULL
+ modular_credits FLOAT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users (
