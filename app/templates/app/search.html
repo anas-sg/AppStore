@@ -133,7 +133,6 @@
                 </form>
             {% else %}
                 <div class="row">
-
                     <table border=1 class="table table-secondary table-hover table-striped table-bordered table-sm">
                         <thead class="text-center">
                             <th>Name</th>
@@ -157,12 +156,9 @@
                         {% endfor %}
                         <tfoot><td>
                             <a class="btn btn-primary" href="{% url 'search' %}" role="button">Back to Search</a>
-                            <!-- <button value="Add" class="btn btn-primary text-center">Search <i class="bi bi-search"></i></button> -->
                         </td></tfoot>
                     </table>
-
-                </div>
-                   
+                </div>                   
             {% endif %}
             </div>
         </div>

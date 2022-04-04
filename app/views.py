@@ -246,50 +246,40 @@ def search(request):
     request.session['admin'] = request.session.get('admin', False)
     if request.GET:
         with connection.cursor() as cursor:
-            prev = 0
             query = 'SELECT * FROM tutors WHERE '
+            queries = []
             fields = []
             try:
                 if request.GET['year']:
-                    query += 'year = %s AND '
-                    prev = 1
+                    queries.append('year = %s')
                     fields.append(request.GET['year'])
             except KeyError:
                 pass
             try:
                 if request.GET['module_code']:
-                    if prev:
-                        query += 'module_code = %s AND '
-                    else:
-                        query += 'module_code = %s AND '
-                        prev = 1
+                    queries.append('module_code = %s')
                     fields.append(request.GET['module_code'])
             except KeyError:
                 pass
             try:
                 if request.GET['grade']:
-                    if prev:
-                        query += 'grade = %s AND ' 
-                    else: 
-                        query += 'grade = %s AND '
-                        prev = 1
+                    queries.append('grade = %s')
                     fields.append(request.GET['grade'])
             except KeyError:
                 pass
             try:
                 if request.GET['unit_time']:
-                    if prev:
-                        query += 'unit_time = %s AND ' 
-                    else: 
-                        query += 'unit_time = %s AND '
-                        prev = 1
+                    queries.append('unit_time = %s')
                     fields.append(request.GET['unit_time'])
             except KeyError:
                 pass
-            query += 'fee BETWEEN %s AND %s'
-            fields += [request.GET['min_fee'], request.GET['max_fee']]
-            fields = [i for i in fields if i != 'none']
-            print(query, file=stderr)
+            try:
+                if request.GET['min_fee'] and request.GET['max_fee']:
+                    queries.append('fee BETWEEN %s AND %s')
+                    fields += [request.GET['min_fee'], request.GET['max_fee']]
+            except KeyError:
+                pass
+            query += ' AND '.join(queries)
             cursor.execute(query, fields)
             results = cursor.fetchall()
         return render(request,'app/search.html', {

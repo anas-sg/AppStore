@@ -56,18 +56,14 @@
             <div class="row">
                 <table border=1 class="table table-secondary table-hover table-striped table-bordered table-sm">
                     <thead class="text-center">
-                        <!-- <th>ID</th> -->
                         <th>Name</th>
-                        <!-- <th>Last Name</th> -->
                         <th>Module</th>
                         <th>Action</th>
                     </thead>
                     {% for tutor in records %}
                     <tr>
-                        <!-- <td class="text-center"> {{ tutor.5 }} </td> -->
                         <td class="text-center"><a href="{% url 'profile' tutor.0 %}" target="_blank">{{ tutor.1 }}</a></td>
-                        <td class="text-center">{{ tutor.2 }}</td>
-                        <!-- <td class="text-center"> {{ tutor.1 }} </td> -->
+                        <td class="text-center"><a href="{% url 'search' %}?module_code={{ tutor.2 }}" target="_blank">{{ tutor.2 }}</a></td>
                         <td class="text-center">
                             <a href="{% url 'view' tutor.0|add:'_'|add:tutor.2 %}"><button class="btn btn-primary btn-sm">View <i class="bi bi-info-circle-fill"></i></button></a> |
                             <a href="#"><button class="btn btn-success btn-sm">Contact <i class="bi bi-chat-fill"></i></button></a>

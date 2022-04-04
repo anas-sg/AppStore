@@ -62,7 +62,7 @@
                     </thead>
                     {% for module in modules %}
                     <tr>
-                        <td class="text-center">{{ module.0 }}</td>
+                        <td class="text-center"><a href="{% url 'search' %}?module_code={{ module.0 }}" target="_blank">{{ module.0 }}</a></td>
                         <td class="text-center">{{ module.1 }}</td>
                         <td class="text-center">{{ module.2 }}</td>
                     </tr>
