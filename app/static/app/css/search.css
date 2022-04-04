@@ -1,0 +1,42 @@
+input {
+    margin-bottom: 3px;
+}
+body {
+   background-color: #333;
+   align-items: center;
+}
+select {
+    margin-bottom: 3px;
+}
+.container .form {
+   position: absolute;
+   top: 50%;
+   transform: translateY(-50%);
+   max-width: 100% !important;
+}
+.container form {
+    max-width: 400px !important;
+    margin: 0 auto;
+}
+.toast {
+    margin: 0 auto;
+}
+table {
+    max-width: 700px !important;
+    margin: 0 auto;
+    border-color: transparent !important;
+}
+td {
+   text-align: center;
+}
+tfoot {
+    border: none !important;
+}
+tfoot td {
+    border: none !important;
+    background-color: transparent !important;
+}
+tfoot tr {
+    border: none !important;
+    background-color: transparent !important;
+}

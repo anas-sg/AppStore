@@ -39,16 +39,15 @@
                             </li>
                             <a class="nav-link active" href="#">Users</a>
                         {% endif %}
+                        <a class="nav-link" aria-current="page" href="{% url 'search' %}">Search</a>
                     </div>
-                    <form method="GET" class="d-flex">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="module_code">
-                        <button class="btn btn-dark" type="submit"><i class="bi bi-search"></i></button>&nbsp;
+                    <div class="d-flex">
                         {% if login %}
-                            <a href="{% url 'logout' %}" class="btn btn-primary"><i class="bi bi-box-arrow-right"></i></a>
+                            <a href="{% url 'logout' %}" class="btn btn-primary">Logout <i class="bi bi-box-arrow-right"></i></a>
                         {% else %}
-                            <a href="{% url 'login' %}" class="btn btn-primary"><i class="bi bi-box-arrow-in-right"></i></a>
+                            <a href="{% url 'login' %}" class="btn btn-primary">Login <i class="bi bi-box-arrow-in-right"></i></a>
                         {% endif %}
-                    </form>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -57,9 +56,7 @@
             <div class="row">
                 <table border=1 class="table table-secondary table-hover table-striped table-bordered table-sm">
                     <thead class="text-center">
-                        <!-- <th>ID</th> -->
                         <th>Student ID</th>
-                        <!-- <th>Last Name</th> -->
                         <th>Name</th>
                         <th>Action</th>
                     </thead>

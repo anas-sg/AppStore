@@ -39,15 +39,13 @@
                         {% endif %}
                         <a class="nav-link active" aria-current="page" href="#">Edit</a>
                     </div>
-                    <form method="GET" class="d-flex">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="module_code">
-                        <button class="btn btn-dark" type="submit"><i class="bi bi-search"></i></button>&nbsp;
+                    <div class="d-flex">
                         {% if login %}
-                            <a href="{% url 'logout' %}" class="btn btn-primary"><i class="bi bi-box-arrow-right"></i></a>
+                            <a href="{% url 'logout' %}" class="btn btn-primary">Logout <i class="bi bi-box-arrow-right"></i></a>
                         {% else %}
-                            <a href="{% url 'login' %}" class="btn btn-primary"><i class="bi bi-box-arrow-in-right"></i></a>
+                            <a href="{% url 'login' %}" class="btn btn-primary">Login <i class="bi bi-box-arrow-in-right"></i></a>
                         {% endif %}
-                    </form>
+                    </div>
                 </div>
             </div>
         </nav>

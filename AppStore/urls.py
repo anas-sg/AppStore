@@ -33,5 +33,6 @@ urlpatterns = [
     path('users', app.views.users, name='users'),
     path('edit_user/<str:student_id>', app.views.edit_user, name='edit_user'),
     path('modules', app.views.modules, name='modules'),
+    path('search', app.views.search, name='search'),
     path('test', app.views.test, name='test')
 ]

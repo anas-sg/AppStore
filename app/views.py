@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.db import connection
 from django.http import HttpResponse
 import logging
+from sys import stderr
 
 logger = logging.getLogger("logger")
 
@@ -227,6 +228,8 @@ def edit_user(request, student_id):
     })
 
 def modules(request):
+    request.session['login'] = request.session.get('login', False)
+    request.session['admin'] = request.session.get('admin', False)
     with connection.cursor() as cursor:
         cursor.execute('''SELECT t.module_code, m.module_name, COUNT(*)
                           FROM tutors t, modules m
@@ -235,5 +238,70 @@ def modules(request):
                           ORDER BY t.module_code, m.module_name''')
         modules = cursor.fetchall()
     return render(request,'app/modules.html', {
-        'modules': modules
+        'modules': modules, **request.session
+    })
+
+def search(request):
+    request.session['login'] = request.session.get('login', False)
+    request.session['admin'] = request.session.get('admin', False)
+    if request.GET:
+        with connection.cursor() as cursor:
+            prev = 0
+            query = 'SELECT * FROM tutors WHERE '
+            fields = []
+            try:
+                if request.GET['year']:
+                    query += 'year = %s AND '
+                    prev = 1
+                    fields.append(request.GET['year'])
+            except KeyError:
+                pass
+            try:
+                if request.GET['module_code']:
+                    if prev:
+                        query += 'module_code = %s AND '
+                    else:
+                        query += 'module_code = %s AND '
+                        prev = 1
+                    fields.append(request.GET['module_code'])
+            except KeyError:
+                pass
+            try:
+                if request.GET['grade']:
+                    if prev:
+                        query += 'grade = %s AND ' 
+                    else: 
+                        query += 'grade = %s AND '
+                        prev = 1
+                    fields.append(request.GET['grade'])
+            except KeyError:
+                pass
+            try:
+                if request.GET['unit_time']:
+                    if prev:
+                        query += 'unit_time = %s AND ' 
+                    else: 
+                        query += 'unit_time = %s AND '
+                        prev = 1
+                    fields.append(request.GET['unit_time'])
+            except KeyError:
+                pass
+            query += 'fee BETWEEN %s AND %s'
+            fields += [request.GET['min_fee'], request.GET['max_fee']]
+            fields = [i for i in fields if i != 'none']
+            print(query, file=stderr)
+            cursor.execute(query, fields)
+            results = cursor.fetchall()
+        return render(request,'app/search.html', {
+            'results': results, 'num': len(results), 'is_results': True, **request.session
+        })
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT module_code, module_name FROM modules ORDER BY module_code")
+        modules = cursor.fetchall()
+        cursor.execute("SELECT MIN(fee) FROM tutors")
+        min_fee = cursor.fetchone()
+        cursor.execute("SELECT MAX(fee) FROM tutors")
+        max_fee = cursor.fetchone()
+    return render(request,'app/search.html', {
+        'modules': modules, 'min_fee': min_fee, 'max_fee': max_fee, 'is_results': False, **request.session
     })

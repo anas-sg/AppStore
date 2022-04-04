@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="An online service for NUS students to find other student tutors for module coaching">
+        <meta name="author" content="Muhammed Anas">
+        {% if status == 1 %}
+        <meta http-equiv="refresh" content="2; url=index">
+        {% endif %}
+        <title>NUS Tutoring Service - Search</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="{% static 'app/css/search.css' %}">
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">NUS Tutoring Service <i class="bi bi-people"></i></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="navbar-nav me-auto">
+                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+                        <a class="nav-link" aria-current="page" href="{% url 'modules' %}">Modules</a>
+                        {% if login %}
+                            <a class="nav-link" href="{% url 'profile' student_id %}">Profile</a>
+                            <a class="nav-link" href="{% url 'add_tutor' '1' %}">Create listing</a>
+                        {% endif %}
+                        {% if admin %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Add
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <li><a class="dropdown-item" href="{% url 'add_tutor' '0' %}">Add tutor</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'add_user' %}">Add user</a></li>
+                                </ul>
+                            </li>
+                            <a class="nav-link" href="{% url 'users' %}">Users</a>
+                        {% endif %}
+                        <a class="nav-link active" aria-current="page" href="{% url 'search' %}">Search</a>
+                    </div>
+                    <div class="d-flex">
+                        {% if login %}
+                            <a href="{% url 'logout' %}" class="btn btn-primary">Logout <i class="bi bi-box-arrow-right"></i></a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-primary">Login <i class="bi bi-box-arrow-in-right"></i></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>  
+        <div class="container {% if not is_results %}form{% endif %}">
+            {% if is_results %}
+            <div class="toast align-items-center text-white {% if num %}bg-success {% else %}bg-danger{% endif %} border-0" id="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">                                
+                            {% if num > 0 %}
+                            <i class="bi bi-person-check-fill"></i>
+                            Found {{ num }} result(s)
+                            {% else %}
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            0 results found
+                            {% endif %}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+            {% endif %}
+            <br><br>
+            <!-- Create a Form -->
+            {% if not is_results %}
+                <form method="GET" id="add_form">
+                    <!-- Security token by Django -->
+                    {% csrf_token %}
+                    <!-- form -->
+                    <div id="div_id_module_code" class="control-group form-floating">
+                        <input class="form-control" list="id_module_code" name='module_code' id="module_code" placeholder="Type to search...">
+                        <datalist id="id_module_code">
+                            {% for module in modules %}
+                                <option value="{{ module.0 }}">{{ module.0 }} {{ module.1 }}</option>
+                            {% endfor %}
+                        </datalist>
+                        <label for="id_module_code" class="control-label requiredField form-label">
+                            Module code<span class="asteriskField">*</span> 
+                        </label>     
+                    </div>
+                    <div id="div_id_grade" class="control-group form-floating">
+                        <input class="form-control" list="grades" name='grade' id="grade" placeholder="Type to search...">
+                        <datalist id="grades">
+                            <option value="A+">A+</option>
+                            <option value="A">A</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B">B</option>
+                            <option value="B-">B-</option>
+                        </datalist>
+                        <label for="id_grade" class="control-label requiredField form-label">
+                            Grade<span class="asteriskField">*</span> 
+                        </label>     
+                    </div>
+                    <div id="div_id_sem" class="control-group form-floating">
+                        <select class="form-select" aria-label="Grade" id="id_sem" name='year'>
+                            <option value="" selected>Choose</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                            <option value="2020">2020</option>
+                            <option value="2019">2019</option>
+                            <option value="2018">2018</option>
+                        </select>
+                        <label for="id_sem" class="control-label requiredField form-label">
+                            Year<span class="asteriskField">*</span> 
+                        </label>     
+                    </div>
+                    <label for="min_fee" class="form-label text-white">Min Fee: $<span id="min-label">{{ min_fee.0 }}</span></label>
+                    <input type="range" class="form-range" min="{{ min_fee.0 }}" max="{{ max_fee.0 }}" value="{{ min_fee.0 }}" name="min_fee" id="min_fee" oninput="update('min-label', this.value);">
+                    <label for="max_fee" class="form-label text-white">Max Fee: $<span id="max-label">{{ max_fee.0 }}</span></label>
+                    <input type="range" class="form-range" min="{{ min_fee.0 }}" max="{{ max_fee.0 }}" value="{{ max_fee.0 }}" name="max_fee" id="max_fee" oninput="update('max-label', this.value);">
+                    <div id="div_id_unit_time" class="control-group form-floating">
+                        <select class="form-select" aria-label="Grade" id="id_unit_time", name='unit_time'>
+                            <option value="">Choose</option>
+                            <option value="per hour">hour</option>
+                            <option value="per session">session</option>
+                        </select>
+                        <label for="id_unit_time" class="control-label requiredField form-label">
+                            Unit time<span class="asteriskField">*</span> 
+                        </label>     
+                    </div>
+                    <br>
+                    <button type="submit" value="Add" class="btn btn-primary text-center">Search <i class="bi bi-search"></i></button>
+                </form>
+            {% else %}
+                <div class="row">
+
+                    <table border=1 class="table table-secondary table-hover table-striped table-bordered table-sm">
+                        <thead class="text-center">
+                            <th>Name</th>
+                            <th>Module</th>
+                            <th>Grade</th>
+                            <th>Fee</th>
+                            <th>Unit time</th>
+                            <th>Year</th>
+                            <th>Action</th>
+                        </thead>
+                        {% for tutor in results %}
+                        <tr>
+                            <td class="text-center"><a href="{% url 'profile' tutor.0 %}" target="_blank">{{ tutor.1 }}</a></td>
+                            <td class="text-center">{{ tutor.2 }}</td>
+                            <td class="text-center">{{ tutor.3 }}</td>
+                            <td class="text-center">{{ tutor.4 }}</td>
+                            <td class="text-center">{{ tutor.5 }}</td>
+                            <td class="text-center">{{ tutor.6 }}</td>
+                            <td class="text-center">Action</td>
+                        </tr>
+                        {% endfor %}
+                        <tfoot><td>
+                            <a class="btn btn-primary" href="{% url 'search' %}" role="button">Back to Search</a>
+                            <!-- <button value="Add" class="btn btn-primary text-center">Search <i class="bi bi-search"></i></button> -->
+                        </td></tfoot>
+                    </table>
+
+                </div>
+                   
+            {% endif %}
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            var toast = document.getElementById('toast');
+            toast = new bootstrap.Toast(toast);
+            toast.show();
+            function update(id, value) {
+                document.getElementById(id).innerHTML = value;
+            }
+        </script>
+    </body>
+</html>

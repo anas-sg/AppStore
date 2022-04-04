@@ -39,15 +39,18 @@
                                 </ul>
                             </li>
                             <a class="nav-link" href="{% url 'users' %}">Users</a>
-                        {% else %}
+                        {% else %}                        
                             <a class="nav-link active" href="{% url 'register' %}">Register</a>
                         {% endif %}
+                        <a class="nav-link" href="{% url 'search' %}">Search</a>
                     </div>
-                    <form class="d-flex">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-dark" type="submit"><i class="bi bi-search"></i></button>&nbsp;
-                        <button class="btn btn-primary" type="submit"><i class="bi bi-box-arrow-in-right"></i></button>
-                    </form>
+                    <div class="d-flex">
+                        {% if login %}
+                            <a href="{% url 'logout' %}" class="btn btn-primary">Logout <i class="bi bi-box-arrow-right"></i></a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-primary">Login <i class="bi bi-box-arrow-in-right"></i></a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </nav>
