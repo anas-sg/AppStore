@@ -230,15 +230,31 @@ def edit_user(request, student_id):
 def modules(request):
     request.session['login'] = request.session.get('login', False)
     request.session['admin'] = request.session.get('admin', False)
-    with connection.cursor() as cursor:
-        cursor.execute('''SELECT t.module_code, m.module_name, COUNT(*)
-                          FROM tutors t, modules m
-                          WHERE t.module_code = m.module_code
-                          GROUP BY t.module_code, m.module_name
-                          ORDER BY t.module_code, m.module_name''')
-        modules = cursor.fetchall()
+    checked = False
+    if request.GET and "most-tutors" in request.GET:
+        with connection.cursor() as cursor:
+            cursor.execute('''SELECT t.module_code, m.module_name, COUNT(*)
+                              FROM tutors t, modules m
+                              WHERE t.module_code = m.module_code
+                              GROUP BY t.module_code, m.module_name
+                              HAVING COUNT(*) >= ALL(
+                              SELECT COUNT(*)
+                                  FROM tutors
+                                  GROUP BY module_code
+                              )
+                              ORDER BY t.module_code, m.module_name''')
+            modules = cursor.fetchall()
+            checked = True
+    else:
+        with connection.cursor() as cursor:
+            cursor.execute('''SELECT t.module_code, m.module_name, COUNT(*)
+                              FROM tutors t, modules m
+                              WHERE t.module_code = m.module_code
+                              GROUP BY t.module_code, m.module_name
+                              ORDER BY t.module_code, m.module_name''')
+            modules = cursor.fetchall()
     return render(request,'app/modules.html', {
-        'modules': modules, **request.session
+        'modules': modules, 'num': len(modules), 'checked': checked, **request.session
     })
 
 def search(request):
@@ -280,6 +296,11 @@ def search(request):
             except KeyError:
                 pass
             query += ' AND '.join(queries)
+            try:
+                if request.GET['best-value']:
+                    query += ' ORDER BY grade ASC, fee ASC'
+            except KeyError:
+                pass
             cursor.execute(query, fields)
             results = cursor.fetchall()
         return render(request,'app/search.html', {

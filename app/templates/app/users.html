@@ -71,7 +71,7 @@
                                 <form method="POST" style="display: inline;" id="{{ user.0 }}-form">
                                     {% csrf_token %}
                                     <label class="form-check-label" for="{{ user.0 }}">Admin</label>
-                                    <input class="form-check-input" name="admin" value="{{ user.0 }}" type="checkbox" role="switch" id="{{ user.0 }}" onchange='test(this);' {% if user.2 %}checked{% endif %}>
+                                    <input class="form-check-input" name="admin" value="{{ user.0 }}" type="checkbox" role="switch" id="{{ user.0 }}" onchange='submit(this);' {% if user.2 %}checked{% endif %}>
                                     <input name="user" value="{{ user.0 }}" type="checkbox" id="{{ user.0 }}-user" hidden>                 
                                     <a href="{% url 'edit_user' user.0 %}" class="btn btn-warning btn-sm">Edit <i class="bi bi-pencil-square"></i></a>
                                 </form>
@@ -84,7 +84,7 @@
             </div>
         </div>
         <script type="text/javascript">
-            function test(check) {
+            function submit(check) {
                 if (check.checked) {
                     confirm('Are you sure you want to make ' + check.id + ' admin?');
                     document.getElementById(check.id + "-user").checked = false;

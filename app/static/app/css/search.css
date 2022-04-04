@@ -8,7 +8,7 @@ body {
 select {
     margin-bottom: 3px;
 }
-.container .form {
+.container.form {
    position: absolute;
    top: 50%;
    transform: translateY(-50%);

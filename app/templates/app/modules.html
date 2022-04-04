@@ -53,23 +53,58 @@
         </nav>
         <br><br>
         <div class="container">
+            <div class="toast align-items-center text-white bg-success border-0" id="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-person-check-fill"></i>
+                            {{ num }} result(s)
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
             <div class="row">
                 <table border=1 class="table table-secondary table-hover table-striped table-bordered table-sm">
                     <thead class="text-center">
+                    <tr>
+                        <td colspan="3">
+                            <div class="form-check form-check-inline">
+                                <form method="GET" id="form">
+                                    <input class="form-check-input" type="checkbox" name="most-tutors" id="most-tutors" onchange='submit();' {% if checked %}checked{% endif %}>
+                                    <label class="form-check-label" for="most-tutors">
+                                    Only modules with highest number of tutors
+                                    </label>
+                                </form>
+                            </div>
+                        </td>    
+                    </tr>
+                    <!-- <thead class="text-center"> -->
                         <th>Module code</th>
                         <th>Module name</th>
                         <th>No. of tutors</th>
                     </thead>
-                    {% for module in modules %}
-                    <tr>
-                        <td class="text-center"><a href="{% url 'search' %}?module_code={{ module.0 }}" target="_blank">{{ module.0 }}</a></td>
-                        <td class="text-center">{{ module.1 }}</td>
-                        <td class="text-center">{{ module.2 }}</td>
-                    </tr>
-                    {% endfor %}
+                    <tbody>
+                        {% for module in modules %}
+                        <tr>
+                            <td class="text-center"><a href="{% url 'search' %}?module_code={{ module.0 }}" target="_blank">{{ module.0 }}</a></td>
+                            <td class="text-center">{{ module.1 }}</td>
+                            <td class="text-center">{{ module.2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>    
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            var toast = document.getElementById('toast');
+            toast = new bootstrap.Toast(toast);
+            toast.show();
+            function update(id, value) {
+                document.getElementById(id).innerHTML = value;
+            }
+            function submit() {
+                document.getElementById("form").submit();
+            }            
+        </script>    
     </body>
 </html>
