@@ -71,7 +71,7 @@ def add_tutor(request, filled):
         if request.session['filled']:
             cursor.execute("SELECT name FROM users WHERE student_id = %s", [request.session['student_id']])
             tutor = cursor.fetchone()
-        cursor.execute("SELECT module_code, module_name FROM modules")
+        cursor.execute("SELECT module_code, module_name FROM modules ORDER BY module_code")
         modules = cursor.fetchall()
     context = {"status": status, "modules": modules, **request.session}
     if request.session['filled']:
