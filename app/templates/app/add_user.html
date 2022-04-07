@@ -8,7 +8,7 @@
         <meta name="author" content="Muhammed Anas">
         {% if admin and status == 1 %}
             <meta http-equiv="refresh" content="2; url={% url 'users' %}">
-        {% if not admin and status == 1 %}
+        {% elif not admin and status == 1 %}
             <meta http-equiv="refresh" content="2; url={% url 'index' %}">
         {% endif %}
         <title>NUS Tutoring Service - Register</title>
