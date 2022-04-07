@@ -30,16 +30,9 @@
                 </div>
             </div>
             {% endif %}
-<!--             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle-fill"></i> <strong>Wrong password!</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div> -->
             <form method="POST" autocomplete="on">
                 {% csrf_token %}
-                <!-- <img class="mb-4" src="../assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
-                <!-- <h2 class="w">Test<i class="bi bi-people"></i></h2> -->
                 <h1 class="h3 mb-3 fw-normal text-white">Please login</h1>
-
                 <div class="form-floating">
                     <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com" name="student_id" value="E3068780">
                     <label for="floatingInput">NUSNET ID</label>
@@ -48,15 +41,8 @@
                     <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password" value="C1cpQxFjfz7">
                     <label for="floatingPassword">Password</label>
                 </div>
-
-<!--                 <div class="checkbox mb-3">
-                    <label class='w'>
-                        <input type="checkbox" value="remember-me"> Remember me
-                     </label>
-                </div> -->
                 <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button><br><br>
                 <a class="w-100 btn btn-secondary" href="{% url 'register' %}">Register</a>
-                <!-- <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p> -->
             </form>
         </main>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>

@@ -24,7 +24,7 @@ def index(request):
         result_dict = {'records': tutors}
         return render(request,'app/index.html', result_dict)
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM tutors ORDER BY name")
+        cursor.execute("SELECT * FROM tutors ORDER BY module_code")
         tutors = cursor.fetchall()
     result_dict = {'records': tutors, **request.session}
     return render(request,'app/index.html', result_dict)

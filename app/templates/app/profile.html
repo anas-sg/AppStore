@@ -22,7 +22,15 @@
                         <a class="nav-link" href="{% url 'index' %}"><i class="bi bi-house-door-fill"></i> Home</a>
                         <a class="nav-link" aria-current="page" href="{% url 'modules' %}"><i class="bi bi-card-list"></i> Modules</a>
                         {% if login %}
-                            <a class="nav-link active" href="#"><i class="bi bi-person-fill"></i> Profile</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle active" href="#" id="profile-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-fill"></i> Profile
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="profile-dropdown">
+                                    <li><a class="dropdown-item" href="{% url 'profile' student_id %}">Offers</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'edit_user' student_id %}">Change password</a></li>
+                                </ul>
+                            </li>
                             <a class="nav-link" href="{% url 'add_tutor' '1' %}"><i class="bi bi-plus-circle-fill"></i> Create listing</a>
                         {% endif %}
                         {% if admin %}
@@ -53,7 +61,7 @@
         <br><br>
         <div class="container">
             <div class="row">
-                <table border=1 class="table table-secondary table-hover table-striped table-bordered table-sm  caption-top">
+                <table border=1 class="table table-secondary table-hover table-striped table-bordered table-sm caption-top">
                     <caption class="text-white">Module(s) offered by {% if visitor %}{{ tutorname }}{% else %}you{% endif %}</caption>
                     <thead class="text-center">
                         <th>Name</th>
@@ -65,9 +73,9 @@
                             <td class="text-center">{{ tutor.1 }}</td>
                             <td class="text-center"><a href="{% url 'search' %}?module_code={{ tutor.2 }}" target="_blank">{{ tutor.2 }}</a></td>
                             <td class="text-center">
-                                <a href="{% url 'view' tutor.0|add:'_'|add:tutor.2 %}"><button class="btn btn-primary btn-sm">View <i class="bi bi-info-circle-fill"></i></button></a> 
+                                <a href="{% url 'view' tutor.0|add:'_'|add:tutor.2 %}" class="btn btn-primary btn-sm">View <i class="bi bi-info-circle-fill"></i></a> 
                                 {% if login and tutor.0 != student_id %}
-                                    | <a href="#"><button class="btn btn-success btn-sm">Contact <i class="bi bi-chat-fill"></i></button></a>
+                                    | <a href="{% url 'offer' tutor.2|add:'_'|add:tutor.0|add:'_'|add:student_id %}" class="btn btn-success btn-sm">Offer <i class="bi bi-chat-fill"></i></a>
                                 {% endif %}
                                 {% if tutor.0 == student_id or admin %}  
                                     | <a href="{% url 'edit' tutor.0|add:'_'|add:tutor.2 %}"><button class="btn btn-warning btn-sm">Edit <i class="bi bi-pencil-square"></i></button></a> |
@@ -84,7 +92,7 @@
                 </table>
                 <hr>
                 {% if not visitor %}
-                <table border=1 class="table table-secondary table-hover table-striped table-bordered table-sm  caption-top">
+                <table border=1 class="table table-secondary table-hover table-striped table-bordered table-sm caption-top">
                     <caption class="text-white">Offers you have received</caption>
                     <thead class="text-center">
                         <th>Module</th>
@@ -113,7 +121,7 @@
                         <tr><td colspan="5">You have not received any offers yet</td></tr>
                     {% endfor %}
                 </table>
-                <table border=1 class="table table-secondary table-hover table-striped table-bordered table-sm  caption-top">
+                <table border=1 class="table table-secondary table-hover table-striped table-bordered table-sm caption-top">
                     <caption class="text-white">Offers you have sent</caption>
                     <thead class="text-center">
                         <th>Module</th>
