@@ -71,12 +71,12 @@
                     </thead>
                     {% for tutor in records %}
                     <tr>
-                        <td class="text-center"><a href="{% url 'profile' tutor.0 %}" target="_blank">{{ tutor.1 }}</a></td>
-                        <td class="text-center"><a href="{% url 'search' %}?module_code={{ tutor.2 }}" target="_blank">{{ tutor.2 }}</a></td>
+                        <td class="text-center"><a href="{% url 'profile' tutor.0 %}" target="_blank" class="link-dark">{{ tutor.1 }}</a></td>
+                        <td class="text-center"><a href="{% url 'search' %}?module_code={{ tutor.2 }}" class="link-dark" target="_blank">{{ tutor.2 }}</a></td>
                         <td class="text-center">
-                            <a href="{% url 'view' tutor.0|add:'_'|add:tutor.2 %}" target="_blank"><button class="btn btn-primary btn-sm">View <i class="bi bi-info-circle-fill"></i></button></a>
+                            <a href="{% url 'view' tutor.0|add:'_'|add:tutor.2 %}" target="_blank"><button class="btn btn-dark btn-sm">View <i class="bi bi-info-circle-fill"></i></button></a>
                             {% if login %} |
-                            <a href="{% url 'offer' tutor.2|add:'_'|add:tutor.0|add:'_'|add:student_id %}"><button class="btn btn-success btn-sm">Offer <i class="bi bi-chat-fill"></i></button></a>
+                            <a href="{% url 'offer' tutor.2|add:'_'|add:tutor.0|add:'_'|add:student_id %}" class="btn btn-success btn-sm">Offer <i class="bi bi-chat-fill"></i></a>
                             {% endif %}
                             {% if admin %} | 
                                 <a href="{% url 'edit' tutor.0|add:'_'|add:tutor.2 %}"><button class="btn btn-warning btn-sm">Edit <i class="bi bi-pencil-square"></i></button></a> |

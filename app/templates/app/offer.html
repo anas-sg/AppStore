@@ -26,7 +26,7 @@
                         <a class="nav-link" href="{% url 'modules' %}"><i class="bi bi-card-list"></i> Modules</a>
                         {% if login %}
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle active" href="#" id="profile-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle" href="#" id="profile-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-person-fill"></i> Profile
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="profile-dropdown">
@@ -38,11 +38,11 @@
                         {% endif %}
                         {% if admin %}
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Add
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <li><a class="dropdown-item active" href="{% url 'add_tutor' '0' %}">Add tutor</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'add_tutor' '0' %}">Add tutor</a></li>
                                     <li><a class="dropdown-item" href="{% url 'add_user' %}">Add user</a></li>
                                 </ul>
                             </li>

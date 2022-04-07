@@ -99,7 +99,8 @@ def add_user(request):
                 context["status"] = 1
                 if not request.session['login']:
                     request.session['login'] = True
-                    request.session['student_id'] = request.POST['student_id']   
+                    request.session['student_id'] = request.POST['student_id']
+                    request.session['name'] = request.POST['name']   
             else:
                 context["status"] = 2
                 status = 'User with ID %s already exists' % (request.POST['student_id']) 
