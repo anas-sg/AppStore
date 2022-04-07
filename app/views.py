@@ -163,6 +163,7 @@ def logout(request):
 def profile(request, student_id):
     request.session['login'] = request.session.get('login', False)
     request.session['admin'] = request.session.get('admin', False)
+    request.session['student_id'] = request.session.get('student_id', None)
     if request.POST:
         if request.POST['action'] == 'delete':
             if not request.session['login']:
@@ -175,8 +176,19 @@ def profile(request, student_id):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM tutors WHERE student_id = %s", [student_id])
         tutors = cursor.fetchall()
-    result_dict = {'records': tutors, **request.session}
-    return render(request,'app/profile.html', result_dict)
+        # cursor.execute("SELECT * FROM offers WHERE tutor_id = %s", [student_id])
+        cursor.execute("""SELECT o.module_code, u.name, o.status, o.fee FROM offers o, users u
+                          WHERE o.tutor_id = %s AND o.tutee_id = u.student_id""", [student_id])
+        received = cursor.fetchall()
+        # cursor.execute("SELECT * FROM offers WHERE tutee_id = %s", [student_id])
+        cursor.execute("""SELECT o.module_code, u.name, o.status, o.fee FROM offers o, users u
+                          WHERE o.tutee_id = %s AND o.tutor_id = u.student_id""", [student_id])
+        sent = cursor.fetchall()
+        cursor.execute("SELECT name FROM users WHERE student_id = %s", [student_id])
+        name = cursor.fetchall()
+    return render(request,'app/profile.html', {
+        'records': tutors, 'received': received, 'sent': sent, 'name': name[0], 'visitor': request.session['student_id'] != student_id, **request.session
+    })
 
 def test(request):
     request.session['visits'] = int(request.session.get('visits', 0)) + 1
@@ -315,4 +327,18 @@ def search(request):
         max_fee = cursor.fetchone()
     return render(request,'app/search.html', {
         'modules': modules, 'min_fee': min_fee, 'max_fee': max_fee, 'is_results': False, **request.session
+    })
+
+def offers(request):
+    request.session['login'] = request.session.get('login', False)
+    if not request.session['login']:
+        return HttpResponse(reason="Not logged in", status=401)
+    student_id = request.session['student_id']
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM offers WHERE tutor_id = %s", [student_id])
+        received = cursor.fetchall()
+        cursor.execute("SELECT * FROM offers WHERE tutee_id = %s", [student_id])
+        sent = cursor.fetchall()     
+    return render(request,'app/offers.html', {
+        'received': received, 'sent': sent
     })

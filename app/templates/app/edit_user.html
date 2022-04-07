@@ -19,11 +19,11 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <div class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <a class="nav-link" href="{% url 'index' %}">Home</a>
-                        <a class="nav-link" aria-current="page" href="{% url 'modules' %}">Modules</a>
+                        <a class="nav-link" href="{% url 'index' %}"><i class="bi bi-house-door-fill"></i> Home</a>
+                        <a class="nav-link" aria-current="page" href="{% url 'modules' %}"><i class="bi bi-card-list"></i> Modules</a>
                         {% if login %}
-                            <a class="nav-link" href="{% url 'profile' student_id %}">Profile</a>
-                            <a class="nav-link" href="{% url 'add_tutor' '1' %}">Create listing</a>
+                            <a class="nav-link" href="{% url 'profile' student_id %}"><i class="bi bi-person-fill"></i> Profile</a>
+                            <a class="nav-link" href="{% url 'add_tutor' '1' %}"><i class="bi bi-plus-circle-fill"></i> Create listing</a>
                         {% endif %}
                         {% if admin %}
                             <li class="nav-item dropdown">
