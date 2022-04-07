@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.db import connection
 from django.http import HttpResponse
 import logging
-from sys import stderr
 
 logger = logging.getLogger("logger")
 
@@ -94,7 +93,7 @@ def add_user(request):
             if not user:
                 cursor.execute("INSERT INTO users VALUES (%s, %s, %s, %s)",
                     [request.POST['student_id'], request.POST['name'],
-                    bool(request.POST.get('is_admin', 'False')),
+                    request.POST.get('is_admin', False),
                     request.POST['password']])
                 context["status"] = 1
                 if not request.session['login']:
@@ -263,8 +262,7 @@ def modules(request):
                               WHERE t.module_code = m.module_code
                               GROUP BY t.module_code, m.module_name
                               HAVING COUNT(*) >= ALL(
-                              SELECT COUNT(*)
-                                  FROM tutors
+                                  SELECT COUNT(*) FROM tutors
                                   GROUP BY module_code
                               )
                               ORDER BY t.module_code, m.module_name''')
