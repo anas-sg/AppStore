@@ -10,6 +10,7 @@ def index(request):
     """Shows the main page"""
     request.session['login'] = request.session.get('login', False)
     request.session['admin'] = request.session.get('admin', False)
+    request.session['name'] = request.session.get('name', None)
     ## Delete tutor
     if request.POST:
         if request.POST['action'] == 'delete':
@@ -33,13 +34,13 @@ def view(request, student_id_mod_code):
     student_id, module_code = student_id_mod_code.split('_')
     request.session['login'] = request.session.get('login', False)
     request.session['admin'] = request.session.get('admin', False)
+    request.session['name'] = request.session.get('name', None)
     ## Use raw query to get a tutor
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM tutors WHERE student_id = %s AND module_code = %s", [student_id, module_code])
         tutor = cursor.fetchone()
         cursor.execute("SELECT module_name FROM modules WHERE module_code = %s", [module_code])
-        module = cursor.fetchone()
-        
+        module = cursor.fetchone()        
     result_dict = {'record': tutor, 'module': module, **request.session}
     return render(request, 'app/view.html', result_dict)
 
@@ -48,6 +49,7 @@ def add_tutor(request, filled):
     """Shows the add_tutor page"""
     request.session['login'] = request.session.get('login', False)
     request.session['admin'] = request.session.get('admin', False)
+    request.session['name'] = request.session.get('name', None)
     request.session['filled'] = bool(filled)
     if not request.session['login']:
         return HttpResponse(reason="Not logged in", status=401)
@@ -82,6 +84,7 @@ def add_user(request):
     """Shows the add_user page"""
     request.session['login'] = request.session.get('login', False)
     request.session['admin'] = request.session.get('admin', False)
+    request.session['name'] = request.session.get('name', None)
     context = {"status": 0, **request.session}
     if request.POST:
         ## Check if student_id is already in the table
@@ -107,6 +110,7 @@ def edit(request, student_id_mod_code):
     """Shows the edit page"""
     student_id, module_code = student_id_mod_code.split('_')
     request.session['admin'] = request.session.get('admin', False)
+    request.session['name'] = request.session.get('name', None)
     if not request.session['admin'] and request.session['student_id'] != student_id:
         return HttpResponse(reason="Not logged in", status=401)
     updated = False
@@ -132,6 +136,7 @@ def login(request):
     """Shows the login page"""
     request.session['login'] = request.session.get('login', False)
     request.session['admin'] = request.session.get('admin', False)
+    request.session['name'] = request.session.get('name', None)
     if request.session['login']:
         return redirect('index')
     context = {"status": 0}
@@ -146,6 +151,7 @@ def login(request):
                     context["status"] = 1   #logged in
                     request.session['login'] = True
                     request.session['student_id'] = student_id
+                    request.session['name'] = user[1]
                     if user[2]:
                         request.session['admin'] = True
                     return redirect('index')
@@ -158,12 +164,15 @@ def login(request):
 def logout(request):
     request.session['login'] = False
     request.session['admin'] = False
+    request.session['student_id'] = None
+    request.session['name'] = None
     return redirect('index')
 
 def profile(request, student_id):
     request.session['login'] = request.session.get('login', False)
     request.session['admin'] = request.session.get('admin', False)
     request.session['student_id'] = request.session.get('student_id', None)
+    request.session['name'] = request.session.get('name', None)
     if request.POST:
         if request.POST['action'] == 'delete':
             if not request.session['login']:
@@ -173,21 +182,24 @@ def profile(request, student_id):
             student_id, module_code = request.POST['student_id_mod_code'].split('_')
             with connection.cursor() as cursor:
                 cursor.execute("DELETE FROM tutors WHERE student_id = %s AND module_code =  %s", [student_id, module_code])
+        elif request.POST['action'] == 'accept' or request.POST['action'] == 'reject':
+            module_code, tutor_id, tutee_id = request.POST['mod_tutor_tutee'].split('_')
+            with connection.cursor() as cursor:
+                cursor.execute("UPDATE offers SET status = %s WHERE module_code = %s AND tutor_id = %s AND tutee_id = %s",
+                           [request.POST['action'] + 'ed', module_code, tutor_id, tutee_id])
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM tutors WHERE student_id = %s", [student_id])
         tutors = cursor.fetchall()
-        # cursor.execute("SELECT * FROM offers WHERE tutor_id = %s", [student_id])
-        cursor.execute("""SELECT o.module_code, u.name, o.status, o.fee FROM offers o, users u
+        cursor.execute("""SELECT o.module_code, u.name, o.status, o.fee, o.tutee_id FROM offers o, users u
                           WHERE o.tutor_id = %s AND o.tutee_id = u.student_id""", [student_id])
         received = cursor.fetchall()
-        # cursor.execute("SELECT * FROM offers WHERE tutee_id = %s", [student_id])
         cursor.execute("""SELECT o.module_code, u.name, o.status, o.fee FROM offers o, users u
                           WHERE o.tutee_id = %s AND o.tutor_id = u.student_id""", [student_id])
         sent = cursor.fetchall()
         cursor.execute("SELECT name FROM users WHERE student_id = %s", [student_id])
-        name = cursor.fetchall()
+        tutorname = cursor.fetchone()[0]
     return render(request,'app/profile.html', {
-        'records': tutors, 'received': received, 'sent': sent, 'name': name[0], 'visitor': request.session['student_id'] != student_id, **request.session
+        'records': tutors, 'received': received, 'sent': sent, 'tutorname': tutorname, 'visitor': request.session['student_id'] != student_id, **request.session
     })
 
 def test(request):
@@ -329,16 +341,23 @@ def search(request):
         'modules': modules, 'min_fee': min_fee, 'max_fee': max_fee, 'is_results': False, **request.session
     })
 
-def offers(request):
+def offer(request, mod_tutor_tutee):
     request.session['login'] = request.session.get('login', False)
     if not request.session['login']:
         return HttpResponse(reason="Not logged in", status=401)
-    student_id = request.session['student_id']
+    module_code, tutor_id, tutee_id = mod_tutor_tutee.split('_')
+    status = 0
+    if request.POST:
+        with connection.cursor() as cursor:
+            cursor.execute("INSERT INTO offers VALUES (%s, %s, %s, %s, %s)",
+                    [request.POST['module_code'], request.POST['tutor_id'], 
+                    request.POST['tutee_id'], 'pending', request.POST['fee']])
+            status = 1
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM offers WHERE tutor_id = %s", [student_id])
-        received = cursor.fetchall()
-        cursor.execute("SELECT * FROM offers WHERE tutee_id = %s", [student_id])
-        sent = cursor.fetchall()     
-    return render(request,'app/offers.html', {
-        'received': received, 'sent': sent
+        cursor.execute("""SELECT t.module_code, m.module_name, t.name, t.fee, t.unit_time, t.student_id
+                          FROM tutors t, modules m
+                          WHERE t.student_id = %s AND t.module_code = %s AND m.module_code = %s""", [tutor_id, module_code, module_code])
+        tutor = cursor.fetchone()
+    return render(request,'app/offer.html', {
+        'tutor': tutor, 'status': status, **request.session
     })
